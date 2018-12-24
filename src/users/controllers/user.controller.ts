@@ -16,6 +16,7 @@ export class UserController {
         ) { }
     
     @Post('create')
+    @Roles('customer', 'admin')
     async createUser(@Body(new ValidationPipe(User)) body: User | Response) {
         if(!(body instanceof User)) {
             return body as Response
@@ -27,7 +28,6 @@ export class UserController {
 
     
     @Get('me')
-    @UseGuards(AuthGuard())
     async getMe(@Req() req) {
         return await getResponse(Promise.resolve(req.user), 'Get me')
     }
@@ -42,16 +42,15 @@ export class UserController {
     }
     
     @Get('list')
-    @UseGuards(AuthGuard())
-    // @Roles('customer', 'admin')
-    async userList(@Query() queryList: any) {
+    async userList(@Req() req, @Query() queryList: any) {
         const {limit, skip} = queryList;
         const result = this.userService.getUsers(skip, limit)
-        
+        logger.dir(req.authInfo);
         return await getResponse(result, 'Get users list')
     }
     
     @Patch('update/:id')
+    @Roles('customer', 'admin')
     async updateUser(@Param() params: any, @Body() user: User) {
         const { id } = params;
         const result = this.userService.updateUser(id, user)
