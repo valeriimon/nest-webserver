@@ -33,7 +33,11 @@ export class UserService {
         return await qb.getManyAndCount().then(([users, total]) => ({users, total}));
     }
 
-    async updateUser(id: number, user: User) {
-        await this.usersRepository.update(id, user);
+    async updateUser(id: number, user: Partial<User>) {
+        return await this.usersRepository.update(id, user);
+    }
+
+    async deleteUser(id: number) {
+        return await this.usersRepository.remove([{ id } as User]);
     }
 }

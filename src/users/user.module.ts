@@ -21,9 +21,10 @@ export class UsersModule {
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(AuthMiddleware)
             .exclude(
-                {path: 'users/list', method: RequestMethod.GET}
+                {path: 'users/list', method: RequestMethod.GET},
+                {path: 'users/create', method: RequestMethod.POST}
             )
-            .forRoutes('users/list')
+            .forRoutes('users/*')
             
     }
 }

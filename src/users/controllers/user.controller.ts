@@ -1,8 +1,7 @@
-import { Controller, Post, Body, Get, Param, Query, Patch, UseGuards, Req, Put, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, Patch, UseGuards, Req, Put, UsePipes, Delete } from '@nestjs/common';
 import { UserService } from 'users/user.service';
 import { User } from 'users/user.entity';
 import { ValidationPipe } from 'shared/pipes/validation/validation.pipe';
-import { AuthGuard } from '@nestjs/passport';
 import { logger } from '../../../logger';
 import { getResponse } from 'shared/utils/utils';
 import { Roles, RolesGuard } from 'shared/guards/roles.guard';
@@ -16,7 +15,6 @@ export class UserController {
         ) { }
     
     @Post('create')
-    @Roles('customer', 'admin')
     async createUser(@Body(new ValidationPipe(User)) body: User | Response) {
         if(!(body instanceof User)) {
             return body as Response
@@ -25,7 +23,6 @@ export class UserController {
         
         return await getResponse(result, 'Create user')
     }
-
     
     @Get('me')
     async getMe(@Req() req) {
@@ -56,5 +53,13 @@ export class UserController {
         const result = this.userService.updateUser(id, user)
         
         return await getResponse(result, `Update user by id{${id}}`)
+    }
+
+    @Delete('delete/:id')
+    async deleteUser(@Param() params: any) {
+        const { id } = params;
+        const result = this.userService.deleteUser(id);
+
+        return await getResponse(result, `Delete user by id id{${id}}`);
     }
 }

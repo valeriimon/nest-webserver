@@ -1,4 +1,4 @@
-import { NestMiddleware, MiddlewareFunction, Injectable, HttpException } from "@nestjs/common";
+import { NestMiddleware, MiddlewareFunction, Injectable, HttpException, UnauthorizedException } from "@nestjs/common";
 import * as passport from 'passport';
 import { User } from "users/user.entity";
 
@@ -29,6 +29,9 @@ export class AuthMiddleware implements NestMiddleware {
                     message: result.info.message,
                     expiredAt: result.info.expiredAt
                 }, 401);
+            }
+            if(!result.user) {
+                throw new UnauthorizedException();
             }
 
             req.authInfo = result;
